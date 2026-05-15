@@ -60,8 +60,11 @@ struct ContentView: View {
                         ForEach(tasks){ task in
                             sampleTask(task: task)
                                 .onTapGesture {
-                                    task.isDone.toggle()
-                                    vm.updateTask(tasks: tasks)
+                                    vm.toggleTask(
+                                            task,
+                                            context: context,
+                                            tasks: tasks
+                                        )
                                 }
                         }
                         .onDelete{ offsets in
@@ -75,6 +78,7 @@ struct ContentView: View {
                     }
                     .listRowSpacing(1)
                     .listStyle(.plain)
+                    .layoutPriority(1)
                 }
                 
                 Button{

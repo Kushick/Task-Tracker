@@ -35,12 +35,19 @@ class TaskTrackerVM:ObservableObject{
             isDone: false
         )
         context.insert(newTask)
+        try?context.save()
     }
     
     func deleteTask(at offsets:IndexSet,tasks:[Task],context:ModelContext){
         for index in offsets{
             context.delete(tasks[index])
         }
+        try? context.save()
     }
-
+    
+    func toggleTask(_ task: Task, context: ModelContext, tasks: [Task]) {
+        task.isDone.toggle()
+        try? context.save()
+        updateTask(tasks: tasks)
+    }
 }
