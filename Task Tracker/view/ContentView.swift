@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var tasks = [
+    @State var tasks = [
         Task(task: "Hello this one of the sample test task.how it is looking?",
              createdAt: Date(),
              isDone: true
@@ -32,13 +32,14 @@ struct ContentView: View {
     var body: some View {
         NavigationStack{
             VStack(spacing: 20) {
-                Text("Your today's progression is \(progressbarValue) %")
+                Text("Your today's progression is \(Int(progressbarValue)) %")
                     .font(.title)
                 ProgressView()
                     .progressViewStyle(.linear)
                     .scaleEffect(x: 1, y: 2, anchor:.center)
                     .padding()
                 Text("Your tasks")
+                    .foregroundStyle(.white)
                     .padding(15)
                     .font(.default)
                     .fontWeight(.heavy)
@@ -50,8 +51,12 @@ struct ContentView: View {
                 Spacer()
                
                 List{
-                    ForEach(tasks,id: \.self){ task in
-                        Text(task.task)
+                    ForEach($tasks,id: \.self){ task in
+//                        HStack{
+//                            Text(task.task)
+//                            Text(task.createdAt,style:.date)
+//                        }
+                        sampleTask(task: task)
                     }
                     .onDelete(perform: deleteTask)
                 }
@@ -66,7 +71,7 @@ struct ContentView: View {
                     )
                     tasks.append(newTask)
                     taskValue=tasks.count
-//                    progressbarValue+=1
+                   progressbarValue+=1
                 }label: {
                     Text("Add new tasks")
                         .padding(15)
@@ -79,6 +84,7 @@ struct ContentView: View {
                 }
 
             }
+            .navigationTitle("Task tracker")
         }
     }
     func deleteTask(at offsets:IndexSet){

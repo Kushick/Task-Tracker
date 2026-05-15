@@ -8,25 +8,29 @@
 import SwiftUI
 
 struct sampleTask: View {
+    @Binding  var task:Task
     var body: some View {
         HStack(){
-            
             Button {
-                
+                task.isDone.toggle()
             } label: {
-                Image(systemName: "circle")
+                Image(systemName: task.isDone ? "checkmark.circle.fill" :  "circle")
                     .font(.headline)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(.blue)
             }
             Spacer()
             Text("Hello this one of the sample test task.how it is looking?")
                 .font(.headline)
+                .strikethrough(task.isDone, color: Color.black)
             Spacer()
             
+            Text(task.createdAt.formatted(date: .abbreviated, time:.shortened))
+                .font(.caption)
+                .foregroundStyle(.gray)
+            
         }
+        .padding()
     }
 }
 
-#Preview {
-    sampleTask()
-}
+
