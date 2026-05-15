@@ -6,39 +6,36 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
+    
+    @Environment(\.modelContext) private var context
     
     @State private var showDialog :Bool = false
     @State private var newTask = ""
     
-    @State var tasks:[Task] = []
-    
-    @State private var totalTask:Int=0
-    @State private var completedTask:Int=0
-    @State private var remainedTask:Int=0
-    
-    @State private var progressbarValue:Double=0.0
-    
+    @Query private var tasks:[Task]
+    @StateObject private var vm = TaskTrackerVM()
     
     var body: some View {
         NavigationStack{
             VStack{
-                Text("Your today's progression is \(Int(progressbarValue*100)) %")
+                Text("Your today's progression is \(Int(vm.progressbarValue*100)) %")
                     .font(.title2)
                 
-                Text("Total task :\(totalTask)")
+                Text("Total task :\(vm.totalTask)")
                     .font(.default)
                 
-                Text("Completed task :\(completedTask)")
+                Text("Completed task :\(vm.completedTask)")
                     .font(.default)
                 
-                Text("Remained task :\(remainedTask)")
+                Text("Remained task :\(vm.remainedTask)")
                     .font(.default)
                 
                 
-                ProgressView(value: progressbarValue)
-                    .animation(.easeInOut,value: progressbarValue)
+                ProgressView(value: vm.progressbarValue)
+                    .animation(.easeInOut,value: vm.progressbarValue)
                     .progressViewStyle(.linear)
                     .scaleEffect(x: 1, y: 2, anchor:.center)
                     .padding()
@@ -60,12 +57,21 @@ struct ContentView: View {
                         .font(.largeTitle)
                 }else{
                     List{
-                        ForEach($tasks,id: \.self){ task in
-                            sampleTask(task: task, onToogle:{
-                                updateTask()
-                            })
+                        ForEach(tasks){ task in
+                            sampleTask(task: task)
+                                .onTapGesture {
+                                    task.isDone.toggle()
+                                    vm.updateTask(tasks: tasks)
+                                }
                         }
-                        .onDelete(perform: deleteTask)
+                        .onDelete{ offsets in
+                            vm.deleteTask(
+                                at: offsets,
+                                tasks: tasks,
+                                context: context
+                            )
+                            vm.updateTask(tasks: tasks)
+                        }
                     }
                     .listRowSpacing(1)
                     .listStyle(.plain)
@@ -78,7 +84,6 @@ struct ContentView: View {
                         .padding(15)
                         .font(.default)
                         .fontWeight(.heavy)
-                        .frame(width: .infinity,height: .infinity)
                         .clipShape(
                             RoundedRectangle(cornerRadius: 15)
                         )
@@ -92,39 +97,18 @@ struct ContentView: View {
         .alert("Enter your task", isPresented: $showDialog){
             TextField("Task name",text: $newTask)
             Button("Add task",role: .confirm){
-                guard !newTask.isEmpty else { return }
-                tasks.append(
-                    Task(task:newTask,
-                         createdAt: Date(),
-                         isDone: false
-                        )
-                )
+                vm.addTask(
+                    taskName: newTask,
+                    context: context)
                 newTask=""
-                updateTask()
+                vm.updateTask(tasks: tasks)
             }
             Button("Cancel",role: .cancel){}
         }
         .onAppear{
-            updateTask()
+            vm.updateTask(tasks: tasks)
         }
-    }
-    
-    func updateTask(){
-        totalTask = tasks.count
-        completedTask=tasks.filter{$0.isDone}.count
-        remainedTask = totalTask-completedTask
-        
-        if totalTask==0{
-            progressbarValue=0
-        }else{
-            progressbarValue = Double(completedTask)/Double(totalTask)
-        }
-    }
-    
-    func deleteTask(at offsets:IndexSet){
-        tasks.remove(atOffsets:offsets)
-        updateTask()
-    }
+    }  
 }
 
 #Preview {

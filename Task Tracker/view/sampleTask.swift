@@ -8,14 +8,12 @@
 import SwiftUI
 
 struct sampleTask: View {
-    @Binding  var task:Task
-    var onToogle:()-> Void
+    var task:Task
     
     var body: some View {
         HStack(){
             Button {
                 task.isDone.toggle()
-                onToogle()
             } label: {
                 Image(systemName: task.isDone ? "checkmark.circle.fill" :  "circle")
                     .font(.headline)

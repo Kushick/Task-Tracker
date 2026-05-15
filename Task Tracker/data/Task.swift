@@ -10,13 +10,11 @@ import SwiftData
 
 @Model
 class Task{
-    var id = UUID()
     var task:String
     var createdAt:Date
     var isDone:Bool
     
-    init(id: UUID = UUID(), task: String, createdAt: Date, isDone: Bool) {
-        self.id = id
+    init(task: String, createdAt: Date, isDone: Bool) {
         self.task = task
         self.createdAt = createdAt
         self.isDone = isDone
