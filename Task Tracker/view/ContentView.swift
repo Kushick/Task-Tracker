@@ -12,22 +12,7 @@ struct ContentView: View {
     @State private var showDialog :Bool = false
     @State private var newTask = ""
     
-    @State var tasks = [
-        Task(task: "Hello this one of the sample test task.how it is looking?",
-             createdAt: Date(),
-             isDone: true
-            ),
-        
-        Task(task: "Hello this one of the sample test task.how it is looking?",
-             createdAt: Date(),
-             isDone: false
-            ),
-        
-        Task(task: "Hello this one of the sample test task.how it is looking?",
-             createdAt: Date(),
-             isDone: true
-            )
-    ]
+    @State var tasks:[Task] = []
     
     @State private var totalTask:Int=0
     @State private var completedTask:Int=0
@@ -63,24 +48,28 @@ struct ContentView: View {
                     .padding(15)
                     .font(.default)
                     .fontWeight(.heavy)
-                    .frame(width: .infinity,height: .infinity)
                     .background(.gray)
                     .clipShape(
                         RoundedRectangle(cornerRadius: 15)
                     )
                 
-                Divider().frame(width: .infinity).background(.black)
+                Divider()
                 
-                List{
-                    ForEach($tasks,id: \.self){ task in
-                        sampleTask(task: task, onToogle:{
-                            updateTask()
-                        })
+                if(tasks.isEmpty){
+                    Text("Hurray! no tasks remains!!!")
+                        .font(.largeTitle)
+                }else{
+                    List{
+                        ForEach($tasks,id: \.self){ task in
+                            sampleTask(task: task, onToogle:{
+                                updateTask()
+                            })
+                        }
+                        .onDelete(perform: deleteTask)
                     }
-                    .onDelete(perform: deleteTask)
+                    .listRowSpacing(1)
+                    .listStyle(.plain)
                 }
-                .listRowSpacing(1)
-                .listStyle(.plain)
                 
                 Button{
                     showDialog.toggle()
@@ -94,6 +83,7 @@ struct ContentView: View {
                             RoundedRectangle(cornerRadius: 15)
                         )
                 }
+
 
             }
             .padding(5)
