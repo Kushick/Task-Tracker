@@ -8,6 +8,10 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    @State private var showDialog :Bool = false
+    @State private var newTask = ""
+    
     @State var tasks = [
         Task(task: "Hello this one of the sample test task.how it is looking?",
              createdAt: Date(),
@@ -16,7 +20,7 @@ struct ContentView: View {
         
         Task(task: "Hello this one of the sample test task.how it is looking?",
              createdAt: Date(),
-             isDone: true
+             isDone: false
             ),
         
         Task(task: "Hello this one of the sample test task.how it is looking?",
@@ -25,19 +29,35 @@ struct ContentView: View {
             )
     ]
     
-    @State private var taskValue = 0
+    @State private var totalTask:Int=0
+    @State private var completedTask:Int=0
+    @State private var remainedTask:Int=0
     
     @State private var progressbarValue:Double=0.0
     
+    
     var body: some View {
         NavigationStack{
-            VStack(spacing: 20) {
-                Text("Your today's progression is \(Int(progressbarValue)) %")
-                    .font(.title)
-                ProgressView()
+            VStack{
+                Text("Your today's progression is \(Int(progressbarValue*100)) %")
+                    .font(.title2)
+                
+                Text("Total task :\(totalTask)")
+                    .font(.default)
+                
+                Text("Completed task :\(completedTask)")
+                    .font(.default)
+                
+                Text("Remained task :\(remainedTask)")
+                    .font(.default)
+                
+                
+                ProgressView(value: progressbarValue)
+                    .animation(.easeInOut,value: progressbarValue)
                     .progressViewStyle(.linear)
                     .scaleEffect(x: 1, y: 2, anchor:.center)
                     .padding()
+                
                 Text("Your tasks")
                     .foregroundStyle(.white)
                     .padding(15)
@@ -48,30 +68,22 @@ struct ContentView: View {
                     .clipShape(
                         RoundedRectangle(cornerRadius: 15)
                     )
-                Spacer()
-               
+                
+                Divider().frame(width: .infinity).background(.black)
+                
                 List{
                     ForEach($tasks,id: \.self){ task in
-//                        HStack{
-//                            Text(task.task)
-//                            Text(task.createdAt,style:.date)
-//                        }
-                        sampleTask(task: task)
+                        sampleTask(task: task, onToogle:{
+                            updateTask()
+                        })
                     }
                     .onDelete(perform: deleteTask)
                 }
-                .padding()
+                .listRowSpacing(1)
                 .listStyle(.plain)
                 
                 Button{
-                    let newTask = Task(
-                        task: "hello this is a new task",
-                        createdAt: Date(),
-                        isDone: true
-                    )
-                    tasks.append(newTask)
-                    taskValue=tasks.count
-                   progressbarValue+=1
+                    showDialog.toggle()
                 }label: {
                     Text("Add new tasks")
                         .padding(15)
@@ -84,11 +96,44 @@ struct ContentView: View {
                 }
 
             }
+            .padding(5)
             .navigationTitle("Task tracker")
         }
+        .alert("Enter your task", isPresented: $showDialog){
+            TextField("Task name",text: $newTask)
+            Button("Add task",role: .confirm){
+                guard !newTask.isEmpty else { return }
+                tasks.append(
+                    Task(task:newTask,
+                         createdAt: Date(),
+                         isDone: false
+                        )
+                )
+                newTask=""
+                updateTask()
+            }
+            Button("Cancel",role: .cancel){}
+        }
+        .onAppear{
+            updateTask()
+        }
     }
+    
+    func updateTask(){
+        totalTask = tasks.count
+        completedTask=tasks.filter{$0.isDone}.count
+        remainedTask = totalTask-completedTask
+        
+        if totalTask==0{
+            progressbarValue=0
+        }else{
+            progressbarValue = Double(completedTask)/Double(totalTask)
+        }
+    }
+    
     func deleteTask(at offsets:IndexSet){
         tasks.remove(atOffsets:offsets)
+        updateTask()
     }
 }
 
