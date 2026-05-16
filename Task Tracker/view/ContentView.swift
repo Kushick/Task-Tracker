@@ -75,6 +75,13 @@ struct ContentView: View {
                             )
                             vm.updateTask(tasks: tasks)
                         }
+                        .onMove {indexSet,toDestination in
+                            vm.moveTask(
+                                tasks: tasks, context: context,
+                                    source: indexSet,
+                                    toDestination: toDestination
+                                )
+                        }
                     }
                     .listRowSpacing(1)
                     .listStyle(.plain)

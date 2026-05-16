@@ -50,4 +50,10 @@ class TaskTrackerVM:ObservableObject{
         try? context.save()
         updateTask(tasks: tasks)
     }
+    
+    func moveTask(tasks:[Task],context:ModelContext,source:IndexSet,toDestination:Int){
+        var updatedTasks = tasks
+        updatedTasks.move(fromOffsets: source, toOffset: toDestination)
+        try? context.save()
+    }
 }
