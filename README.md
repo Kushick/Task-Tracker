@@ -59,13 +59,16 @@ ViewModel → Business logic and state management
 
 ## App Preview
 ### Home Screen(Light mode)
-
+![Home](HomeScreen_LightMode.png)
 ### Home Screen(Dark mode)
-
+![Home](HomeScreen_DarkMode.png)
 ### Task Screen(Light mode)
-
+![Task](TaskScreen_LightMobe..png)
 ### Task Screen(Dark mode)
+![Task](TaskScreen_DarkMobe.png)
 
+### Simulation Demo
+![Simulation demo](Simulation.gif)
 
 ## Future improvements
 Task reminders and notifications
