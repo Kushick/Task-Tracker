@@ -20,18 +20,24 @@ struct ContentView: View {
     
     var body: some View {
         NavigationStack{
-            VStack{
-                Text("Your today's progression is \(Int(vm.progressbarValue*100)) %")
-                    .font(.title2)
+            LazyVStack{
                 
-                Text("Total task :\(vm.totalTask)")
-                    .font(.default)
-                
-                Text("Completed task :\(vm.completedTask)")
-                    .font(.default)
-                
-                Text("Remained task :\(vm.remainedTask)")
-                    .font(.default)
+                if tasks.isEmpty{
+                    EmptyView()
+                }
+                else{
+                    Text("Your today's progression is \(Int(vm.progressbarValue*100)) %")
+                        .font(.title2)
+                    
+                    Text("Total task :\(vm.totalTask)")
+                        .font(.default)
+                    
+                    Text("Completed task :\(vm.completedTask)")
+                        .font(.default)
+                    
+                    Text("Remained task :\(vm.remainedTask)")
+                        .font(.default)
+                }
                 
                 
                 ProgressView(value: vm.progressbarValue)
