@@ -114,9 +114,13 @@ struct ContentView: View {
         .alert("Enter your task", isPresented: $showDialog){
             TextField("Task name",text: $newTask)
             Button("Add task",role: .confirm){
+                guard !newTask.isEmpty else{
+                    return 
+                }
                 vm.addTask(
                     taskName: newTask,
-                    context: context)
+                    context: context
+                )
                 newTask=""
                 vm.updateTask(tasks: tasks)
             }

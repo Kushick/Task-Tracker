@@ -12,6 +12,9 @@ struct sampleTask: View {
     
     var body: some View {
         HStack(){
+            
+            Image(systemName: "line.3.horizontal.decrease")
+                .symbolEffect(.pulse)
             Button {
                 task.isDone.toggle()
             } label: {
