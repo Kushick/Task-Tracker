@@ -13,15 +13,21 @@ struct ContentView: View {
     @Environment(\.modelContext) private var context
     
     @State private var showDialog :Bool = false
-    @State private var newTask = ""
+    @State private var showEditDialog:Bool=false
+    @State private var allowfullSwipe:Bool = false
+    
+    @State private var selectedTask:Task?
+
+    @State private var newTask:String = ""
+    @State private var edittedTask:String=""
     
     @Query private var tasks:[Task]
+    
     @StateObject private var vm = TaskTrackerVM()
     
     var body: some View {
         NavigationStack{
             VStack{
-                
                 if tasks.isEmpty{
                     EmptyView()
                 }
@@ -72,6 +78,20 @@ struct ContentView: View {
                                             tasks: tasks
                                         )
                                 }
+                                .swipeActions(
+                                    edge: .leading,
+                                    allowsFullSwipe: allowfullSwipe
+                                ){
+                                        Button{
+                                            selectedTask=task
+                                            edittedTask=task.task
+                                            showEditDialog.toggle()
+                                        }label: {
+                                            Image(systemName: "pencil")
+                                        }
+                                        .tint(.green)
+                                    
+                                }
                         }
                         .onDelete{ offsets in
                             vm.deleteTask(
@@ -84,9 +104,9 @@ struct ContentView: View {
                         .onMove {indexSet,toDestination in
                             vm.moveTask(
                                 tasks: tasks, context: context,
-                                    source: indexSet,
-                                    toDestination: toDestination
-                                )
+                                source: indexSet,
+                                toDestination: toDestination
+                            )
                         }
                     }
                     .listRowSpacing(1)
@@ -123,6 +143,25 @@ struct ContentView: View {
                 )
                 newTask=""
                 vm.updateTask(tasks: tasks)
+            }
+            Button("Cancel",role: .cancel){}
+        }
+        
+        .alert("Your new task",isPresented: $showEditDialog){
+            TextField("Your new task",text: $edittedTask)
+            Button("Edit task",role: .confirm){
+                guard !edittedTask.isEmpty else{
+                    return
+                }
+                if let selectedTask{
+                    vm.newEdittedTask(
+                            task: selectedTask,
+                            newtaskName: edittedTask,
+                            context: context
+                        )
+                    vm.updateTask(tasks: tasks)
+                }
+                edittedTask=""
             }
             Button("Cancel",role: .cancel){}
         }

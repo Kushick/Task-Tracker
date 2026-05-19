@@ -56,4 +56,13 @@ class TaskTrackerVM:ObservableObject{
         updatedTasks.move(fromOffsets: source, toOffset: toDestination)
         try? context.save()
     }
+    
+    func newEdittedTask(
+        task:Task,
+        newtaskName:String,
+        context:ModelContext
+    ){
+        task.task=newtaskName
+        try?context.save()
+    }
 }
