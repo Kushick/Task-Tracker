@@ -25,7 +25,10 @@ struct sampleTask: View {
             VStack{
                 Text(task.task)
                     .font(.headline)
-                    .strikethrough(task.isDone, color: Color.black)
+                    .strikethrough(
+                        task.isDone,
+                        color: Color.red
+                    )
                 
                 Text(task.createdAt.formatted(date: .abbreviated, time:.shortened))
                     .font(.caption)

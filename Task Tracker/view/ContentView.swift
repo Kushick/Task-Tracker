@@ -5,8 +5,8 @@
 //  Created by Kushick Chakraborty on 14/5/26.
 //
 
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 struct ContentView: View {
     
@@ -21,7 +21,17 @@ struct ContentView: View {
     @State private var newTask:String = ""
     @State private var edittedTask:String=""
     
-    @Query private var tasks:[Task]
+    @Query(sort:[
+        SortDescriptor<Task>(\.createdAt,order:.reverse)
+        ]
+    )
+    private var tasks:[Task]
+    
+    private var sortedTask:[Task]{
+        tasks.sorted{ fle,sle in      //fle->list first element,sle->list second element
+            !fle.isDone && sle.isDone
+        }
+    }
     
     @StateObject private var vm = TaskTrackerVM()
     
@@ -69,7 +79,7 @@ struct ContentView: View {
                         .font(.largeTitle)
                 }else{
                     List{
-                        ForEach(tasks){ task in
+                        ForEach(sortedTask){ task in
                             sampleTask(task: task)
                                 .onTapGesture {
                                     vm.toggleTask(
